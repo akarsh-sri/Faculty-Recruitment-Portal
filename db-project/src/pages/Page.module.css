@@ -1,0 +1,226 @@
+.page {
+  width: 100vw;
+  margin: auto;
+  margin-top: 0;
+}
+.head {
+  width: 100%;
+  color: black;
+  background-color: white;
+  height: 7rem;
+  padding-top: 0.1rem;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 100;
+  line-height: 1.4rem;
+}
+.blink_me {
+  animation: blinker 1s linear infinite;
+  color: red;
+  margin-top: 2rem;
+  margin-bottom: 4rem;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+.mainform {
+  width: 90%;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 7rem;
+  background-color: white;
+  color: black;
+  padding: 1rem;
+}
+.name {
+  color: blue;
+  font-weight: 700;
+}
+.logout {
+  background-color: #449d44;
+  color: white;
+  width: 80px;
+  height: 40px;
+  padding: 0.3rem;
+  border-radius: 3px;
+}
+.formHead {
+  padding-inline: 3rem;
+  display: flex;
+  align-items: baseline;
+  gap: 67rem;
+}
+
+hr {
+  margin-inline: 2rem;
+  background-color: rgb(255, 255, 255);
+}
+h4 {
+  text-align: center;
+  color: purple;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+section {
+  width: 95%;
+  margin: auto;
+  margin-bottom: 4rem;
+}
+section h3 {
+  display: block;
+  background-color: rgb(98, 185, 10);
+  color: rgb(54, 91, 16);
+  padding: 0.4rem;
+  padding-inline-start: 1rem;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  margin-bottom: 0;
+}
+.flex {
+  margin-top: 0;
+  display: flex;
+  flex-wrap: wrap;
+  padding-inline: 2rem;
+  justify-content: space-between;
+  background-color: rgb(204, 204, 204);
+}
+table {
+  border: 0.1px solid black;
+  text-align: start;
+}
+tr {
+  max-width: 1rem;
+  background-color: aliceblue;
+  max-width: fit-content;
+}
+th {
+  width: 10000px;
+  padding-left: 1rem;
+  text-align: start;
+  border-bottom: 0.1px solid black;
+  max-width: fit-content;
+}
+td {
+  max-width: fit-content;
+}
+table {
+  margin-top: 1rem;
+  width: 100%;
+}
+.addMore {
+  padding: 0.5rem;
+  margin-left: 2rem;
+  background-color: orange;
+  color: black;
+  border-width: 0;
+}
+
+.submit {
+  background-color: #449d44;
+  padding: 0.5rem;
+}
+.rightAlign {
+  text-align: right;
+}
+.remove {
+  font-weight: bold;
+  font-size: 20px;
+  color: rgb(251, 102, 102);
+  scale: 1;
+  cursor: pointer;
+}
+.remove:hover {
+  color: red;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(98, 185, 10);
+  padding-inline-end: 1rem;
+}
+.small-text {
+  font-size: medium;
+}
+.file-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: darkgreen;
+  text-align: center;
+  padding-inline: 20px;
+}
+.file-button {
+  background-image: linear-gradient(to bottom, lime, green);
+  text-align: center;
+  padding: 0.4rem;
+  padding-inline: 0.1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 1s;
+  margin-left: 50px;
+}
+.file-button:hover {
+  background-image: linear-gradient(to top, lime, green);
+}
+
+.selected-item {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: blueviolet;
+  padding-inline: 20px;
+}
+.file-card {
+  height: fit-content;
+  width: 400px;
+  padding-bottom: 20px;
+  margin-top: 20px;
+  border: 1px solid black;
+  border-top: 0px;
+}
+.card-head {
+  margin-block-start: 0px;
+  margin-block-end: 10px;
+  padding:10px;
+  font-size: 15px;
+  background-color: aquamarine;
+  color:blue  
+}
+.head-button{
+  padding:10px;
+  background-color: rgb(54, 132, 106);
+}
+.file-button-sm {
+  background-image: linear-gradient(to bottom, lime, green);
+  padding: 10px;
+  padding-inline: 15px;
+  border-radius: 50px;
+  text-align: center;
+  width:fit-content
+}
+.file-button-sm:hover {
+  background-image: linear-gradient(to top, lime, green);
+}
+.small-flex{
+  display: flex;
+  flex-wrap: wrap;
+}
+.flex-center{
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+}
+.select{
+  background-color: white;
+  color: black;
+}
+

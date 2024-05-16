@@ -1,0 +1,20 @@
+.solo {
+
+    display: flex;
+    justify-content: flex-start;
+  width: 7.5rem;
+  padding: 0.5rem;
+  padding-inline-end: 0;
+  
+  margin-inline: 1rem;
+}
+.solo input {
+  background-color: white;
+  color: black;
+  margin: 0;
+  width: 100%;
+}
+
+.solo input[disabled] {
+  background-color: rgb(200, 200, 200);
+}

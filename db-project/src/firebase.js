@@ -9,13 +9,13 @@ import { initializeApp } from "firebase/app";
 //   appId: process.env.REACT_APP_FIREBASE_APP_ID
 // });
 const app = initializeApp({
-  apiKey: "AIzaSyDXFvuj-ISIokKVNaVhYTbjYNDQNbOsLWU",
-  authDomain: "database-form-607d8.firebaseapp.com",
-  projectId: "database-form-607d8",
-  storageBucket: "database-form-607d8.appspot.com",
-  messagingSenderId: "115433192349",
-  appId: "1:115433192349:web:23ce37fba7eeac14048d74",
-  measurementId: "G-52VGE7LWLW",
+  apiKey: "xxxxxxxx",
+  authDomain: "xxxxxxx",
+  projectId: "xxxxxxx",
+  storageBucket: "xxxxxxx",
+  messagingSenderId: "xxxxx",
+  appId: "xxxxx",
+  measurementId: "xxxxxxx",
 });
 
 export default app;

@@ -3,18 +3,28 @@ import cors from "cors"
 import bodyParser from "body-parser"
 import mysql from "mysql";
 import { v2 as cloudinary } from 'cloudinary';
+import multer from "multer";
 const app = express()
 const port = 3000
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
-app.use(bodyParser.json({ limit: '50mb' }));
+
 cloudinary.config({
     cloud_name: "dxl0rgckl",
     api_key: "456365272847398",
     api_secret: "q4F9RnqPenK2_pXv8cAEl8K3p4U",
 });
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "upload/");
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
+});
+const upload = multer({ storage });
 
 const pool = mysql.createPool({
     host: 'localhost',
@@ -26,27 +36,27 @@ const pool = mysql.createPool({
 
 app.post('/', (req, res) => {
     const { fname, mname, lname, MaritalStatus, Nationality, Gender, IDPoof, CA1, PA1, IDFile, Father, Email, AdvertisementNo, category, DOB, AppNo, date, post, Department, Photo } = req.body;
-    const {uid}=req.body;
-    // pool.query('INSERT INTO `user` (`idUser`,`First Name`,`Middle Name`,`Last Name`,`Marital Status`,`Nationality`,`Gender`,`ID Proof`,`Correspondence Address`,`Permanent Address`,`Father Name`,`Email`,`Advertisement No.`,`Category`,`DOB`,`Application No.`,`Date of Application`,`Post`,`Department`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [uid, fname, mname, lname, MaritalStatus, Nationality, Gender, IDPoof, CA1, PA1, Father, Email, AdvertisementNo, category, DOB, AppNo, date, post, Department], (error, results, fields) => {
-    //     if (error) {
-    //         console.error("Error inserting data: ", error);
-    //         res.status(500).send("Error inserting data");
-    //     } else {
-    //         console.log("Data inserted successfully");
-    //         res.status(200).send("Data inserted successfully");
-    //     }
-    // });
+    const { uid } = req.body;
+    pool.query('INSERT INTO `user` (`idUser`,`First Name`,`Middle Name`,`Last Name`,`Marital Status`,`Nationality`,`Gender`,`ID Proof`,`Correspondence Address`,`Permanent Address`,`Father Name`,`Email`,`Advertisement No.`,`Category`,`DOB`,`Application No.`,`Date of Application`,`Post`,`Department`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [uid, fname, mname, lname, MaritalStatus, Nationality, Gender, IDPoof, CA1, PA1, Father, Email, AdvertisementNo, category, DOB, AppNo, date, post, Department], (error, results, fields) => {
+        if (error) {
+            console.error("Error inserting data: ", error);
+            res.status(500).send("Error inserting data");
+        } else {
+            console.log("Data inserted successfully");
+            res.status(200).send("Data inserted successfully");
+        }
+    });
 
-    // const { email, AltEmail, Mobile, AltMobile, Landline } = req.body;
-    // pool.query('INSERT INTO `contact` (`idUser`,`Email`,`AltEmail`,`Mobile`,`AltMobile`,`Landline`) VALUES (?,?,?,?,?,?)', [uid, Email, AltEmail, Mobile, AltMobile, Landline]);
+    const { email, AltEmail, Mobile, AltMobile, Landline } = req.body;
+    pool.query('INSERT INTO `contact` (`idUser`,`Email`,`AltEmail`,`Mobile`,`AltMobile`,`Landline`) VALUES (?,?,?,?,?,?)', [uid, Email, AltEmail, Mobile, AltMobile, Landline]);
 
-    // console.log(req.body);
+    console.log(req.body);
 
 });
 
 
 app.get('/', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT user.*, contact.* FROM user JOIN contact ON user.idUser = contact.idUser WHERE user.idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -58,7 +68,7 @@ app.get('/', (req, res) => {
 
 app.post('/pg2', (req, res) => {
     // console.log(req.body);
-    const {uid}=req.body;
+    const { uid } = req.body;
     const { University, Department, PhDS, YoJ, Defence, Award, TPhD, MDegree, MUniversity, MBranch, MYoJ, MYoC, MDuration, MCGPA, MDivision, BDegree, BUniversity, BBranch, BYoJ, BYoC, BDuration, BCGPA, BDivision, School10, PassingYear10, Grade10, Division10, School12, PassingYear12, Grade12, Division12 } = req.body;
 
     pool.query('INSERT INTO `phd` (`idUser`,`University`,`Name of PhD Supervisor`,`Date of Thesis Defence`,`Title of PhD Thesis`,`Department`,`Year of Joining`,`Date of Award`) VALUES (?,?,?,?,?,?,?,?)', [uid, University, PhDS, Defence, TPhD, Department, YoJ, Award], (error) => {
@@ -123,7 +133,7 @@ app.post('/pg2', (req, res) => {
 
 
 app.get('/phd', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM phd WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -134,7 +144,7 @@ app.get('/phd', (req, res) => {
 });
 
 app.get('/pg', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM pg WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -145,7 +155,7 @@ app.get('/pg', (req, res) => {
 });
 
 app.get('/ug', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM ug WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -156,7 +166,7 @@ app.get('/ug', (req, res) => {
 });
 
 app.get('/10th', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM 10th WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -167,7 +177,7 @@ app.get('/10th', (req, res) => {
 });
 
 app.get('/12th', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM 12th WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -178,7 +188,7 @@ app.get('/12th', (req, res) => {
 });
 
 app.get('/pg2', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `additional education` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -191,7 +201,7 @@ app.get('/pg2', (req, res) => {
 
 app.post('/pg3', (req, res) => {
     // console.log(req.body);
-    const {uid}=req.body;
+    const { uid } = req.body;
     const { Position, Status, DoL, Institution, DoJ, Duration } = req.body;
 
     pool.query('INSERT INTO `present employement` (`idUser`,`Position`,`Status`,`Date of Leaving`,`Institution`,`Date of Joining`,`Duration`) VALUES (?,?,?,?,?,?,?)', [uid, Position, Status, DoL, Institution, DoJ, Duration], (error) => {
@@ -321,7 +331,7 @@ app.post('/pg3', (req, res) => {
 })
 
 app.get('/pre', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     console.log(uid);
     pool.query('SELECT * FROM `present employement` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
@@ -333,7 +343,7 @@ app.get('/pre', (req, res) => {
 });
 
 app.get('/his', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `employment history` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -344,7 +354,7 @@ app.get('/his', (req, res) => {
 });
 
 app.get('/te', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `teaching experience` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -355,7 +365,7 @@ app.get('/te', (req, res) => {
 });
 
 app.get('/re', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `research experience` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -366,7 +376,7 @@ app.get('/re', (req, res) => {
 });
 
 app.get('/ie', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `industrial experience` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -380,7 +390,7 @@ app.get('/ie', (req, res) => {
 
 app.post('/pg4', (req, res) => {
     // console.log(req.body);
-    const {uid}=req.body;
+    const { uid } = req.body;
     // console.log("hello");
     const { NoIP, NoP, NoCP, NoPat, NoB, NoBC, NoNC } = req.body;
     pool.query('INSERT INTO `summary of publication` (`idUser`,`Number of International Journal Paper`,`Number of International Conference Paper`,`Number of Patent`,`Number of Book Chapter`,`Number of National Journal Paper`,`Number of National Conference Paper`,`Number of Book`) VALUES (?,?,?,?,?,?,?,?)', [uid, NoIP, NoCP, NoPat, NoBC, NoP, NoNC, NoB], (error) => {
@@ -589,7 +599,7 @@ app.post('/pg4', (req, res) => {
 })
 
 app.get('/sum', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `summary of publication` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -600,7 +610,7 @@ app.get('/sum', (req, res) => {
 });
 
 app.get('/best', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `10 best publication` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -611,7 +621,7 @@ app.get('/best', (req, res) => {
 });
 
 app.get('/pat', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `patents` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -622,7 +632,7 @@ app.get('/pat', (req, res) => {
 });
 
 app.get('/book', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `book` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -633,7 +643,7 @@ app.get('/book', (req, res) => {
 });
 
 app.get('/bc', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `book chapter` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -644,7 +654,7 @@ app.get('/bc', (req, res) => {
 });
 
 app.get('/g', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT `Google Scholar Link` FROM `user` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -656,7 +666,7 @@ app.get('/g', (req, res) => {
 
 app.post('/pg5', (req, res) => {
     // console.log(req.body);
-    const {uid}=req.body;
+    const { uid } = req.body;
     const { NoPS0, Membership0 } = req.body;
     if (NoPS0 != undefined) {
         pool.query('INSERT INTO `membership of professional societies` (`idUser`,`Name of Professional Society`,`Membership Status`) VALUES (?,?,?)', [uid, NoPS0, Membership0], (error) => {
@@ -795,7 +805,7 @@ app.post('/pg5', (req, res) => {
 })
 
 app.get('/mem', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `membership of professional societies` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -806,7 +816,7 @@ app.get('/mem', (req, res) => {
 });
 
 app.get('/pt', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `professional training` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -817,7 +827,7 @@ app.get('/pt', (req, res) => {
 });
 
 app.get('/aw', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `awards and recognition` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -828,7 +838,7 @@ app.get('/aw', (req, res) => {
 });
 
 app.get('/sp', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `sponsored project` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -839,7 +849,7 @@ app.get('/sp', (req, res) => {
 });
 
 app.get('/cp', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `consultancy project` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -854,7 +864,7 @@ app.get('/cp', (req, res) => {
 
 app.post('/pg6', (req, res) => {
     // console.log(req.body);
-    const {uid}=req.body;
+    const { uid } = req.body;
     const { PName0, PTitle0, PRole0, POngoing0, PSince0 } = req.body;
     if (PName0 != "") {
         pool.query('INSERT INTO `phd supervision` (`idUser`,`Name`,`Title of Thesis`,`Role`,`Ongoing/Completed`,`Ongoing Since`) VALUES (?,?,?,?,?,?)', [uid, PName0, PTitle0, PRole0, POngoing0, PSince0], (error) => {
@@ -943,7 +953,7 @@ app.post('/pg6', (req, res) => {
 })
 
 app.get('/ph', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `phd supervision` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -953,7 +963,7 @@ app.get('/ph', (req, res) => {
     });
 });
 app.get('/u', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `bachelor degree` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -963,7 +973,7 @@ app.get('/u', (req, res) => {
     });
 });
 app.get('/p', (req, res) => {
-    const uid=req.query.uid;
+    const uid = req.query.uid;
     pool.query('SELECT * FROM `master degree` WHERE idUser = ?', [uid], (error, results) => {
         if (error) {
             console.log(error);
@@ -973,118 +983,385 @@ app.get('/p', (req, res) => {
     });
 });
 
-app.post('/pg7', (req, res) => {
+app.post("/pg7", (req, res) => {
+    console.log(req.body);
+    console.log("krr");
+    // const {uid}=req.body;
+    const {
+        researchContri,
+        teachingContri,
+        relevantInfo,
+        professionalService,
+        loj,
+        loc,
+        uid
+    } = req.body;
     // console.log(req.body);
-    // console.log("krr");
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "researchContri", researchContri],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "teachingContri", teachingContri],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "relevantInfo", relevantInfo],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "professionalService", professionalService],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "loj", loj],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+    pool.query(
+        "INSERT INTO `statement` (`idUser`,`Text`,`Text Name`) VALUES (?,?,?)",
+        [uid, "loc", loc],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
+        }
+    );
+});
+app.get('/sendText/:uuid', (req, res) => {
+    const uuid = req.params.uuid;
+    pool.query(
+        "SELECT * FROM `statement` WHERE idUser = ?",
+        [uuid],
+        (error, results) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            res.json(results);
+        }
+    );
 })
+const config = upload.fields([
+    { name: "bestPapers", maxCount: 1 },
+    { name: "phd", maxCount: 1 },
+    { name: "pg", maxCount: 1 },
+    { name: "ug", maxCount: 1 },
+    { name: "doc12", maxCount: 1 },
+    { name: "doc10", maxCount: 1 },
+    { name: "paySlip", maxCount: 1 },
+    { name: "noc", maxCount: 1 },
+    { name: "postPhd", maxCount: 1 },
+    { name: "exp", maxCount: 1 },
+    { name: "sign", maxCount: 1 },
+]);
+app.post("/pg8", config, async (req, res) => {
+    // console.log(req.files);
+    // console.log(req.body);
+    const { uid } = req.body;
+    console.log(req.body);
+    const {
+        bestPapers,
+        phd,
+        pg,
+        ug,
+        doc12,
+        doc10,
+        paySlip,
+        noc,
+        postPhd,
+        exp,
+        sign,
+    } = req.files;
+    try {
+        const { url: bestPapersUrl } = await cloudinary.uploader.upload(
+            bestPapers[0].path,
+            {
+                folder: "DBMS_project",
+                resource_type: "auto",
+            }
+        );
+        // fs.unlinkSync(bestPapers[0].path);
+        const { url: phdUrl } = await cloudinary.uploader.upload(phd[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(phd[0].path);
+        const { url: pgUrl } = await cloudinary.uploader.upload(pg[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(pg[0].path);
+        const { url: ugUrl } = await cloudinary.uploader.upload(ug[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(ug[0].path);
+        const { url: doc12Url } = await cloudinary.uploader.upload(doc12[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(doc12[0].path);
+        const { url: doc10Url } = await cloudinary.uploader.upload(doc10[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(doc10[0].path);
+        const { url: paySlipUrl } = await cloudinary.uploader.upload(
+            paySlip[0].path,
+            {
+                folder: "DBMS_project",
+                resource_type: "auto",
+            }
+        );
+        // fs.unlinkSync(paySlip[0].path);
+        const { url: nocUrl } = await cloudinary.uploader.upload(noc[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(noc[0].path);
+        const { url: postPhdUrl } = await cloudinary.uploader.upload(
+            postPhd[0].path,
+            {
+                folder: "DBMS_project",
+                resource_type: "auto",
+            }
+        );
+        // fs.unlinkSync(postPhd[0].path);
+        const { url: expUrl } = await cloudinary.uploader.upload(exp[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        // fs.unlinkSync(exp[0].path);
+        const { url: signUrl } = await cloudinary.uploader.upload(sign[0].path, {
+            folder: "DBMS_project",
+            resource_type: "auto",
+        });
+        fs.unlinkSync(sign[0].path);
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, bestPapers[0].fieldname, bestPapersUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, phd[0].fieldname, phdUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, pg[0].fieldname, pgUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, ug[0].fieldname, ugUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, doc12[0].fieldname, doc12Url],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, doc10[0].fieldname, doc10Url],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, paySlip[0].fieldname, paySlipUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, noc[0].fieldname, nocUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, postPhd[0].fieldname, postPhdUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, exp[0].fieldname, expUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
 
-app.post('/pg8',async(req,res)=>{
-    // console.log("jhc");
-    const {uid}=req.body;
-    const {bestPapers, phd, pg, ug, doc12, doc10, paySlip, noc, postPhd, exp, sign}=req.body.payload;
-    const {url : bestPapersUrl} = await cloudinary.uploader.upload(bestPapers[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : phdUrl} = await cloudinary.uploader.upload(phd[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : pgUrl} = await cloudinary.uploader.upload(pg[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : ugUrl} = await cloudinary.uploader.upload(ug[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : doc12Url} = await cloudinary.uploader.upload(doc12[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : doc10Url} = await cloudinary.uploader.upload(doc10[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : paySlipUrl} = await cloudinary.uploader.upload(paySlip[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : nocUrl} = await cloudinary.uploader.upload(noc[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : postPhdUrl} = await cloudinary.uploader.upload(postPhd[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : expUrl} = await cloudinary.uploader.upload(exp[1],{
-        upload_preset:'ml_default',
-    })
-    const {url : signUrl} = await cloudinary.uploader.upload(sign[1],{
-        upload_preset:'ml_default',
-    })
-
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,bestPapers[0],bestPapersUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
+        pool.query(
+            "INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)",
+            [uid, sign[0].fieldname, signUrl],
+            (error) => {
+                if (error) {
+                    console.error("Error inserting data: ", error);
+                    res.status(500).send("Error inserting data");
+                }
+            }
+        );
+        res.send("Data Uploaded Successfully");
+    } catch (error) {
+        // res.status(500).send("Error Uploading Files");
+    }
+    const {
+        name1,
+        position1,
+        association1,
+        institution1,
+        email1,
+        contact1,
+        name2,
+        position2,
+        association2,
+        institution2,
+        email2,
+        contact2,
+        name3,
+        position3,
+        association3,
+        institution3,
+        email3,
+        contact3,
+    } = req.body;
+    pool.query(
+        "INSERT INTO referees (`idUser`,`Name`,`Position`,`Association`,`Institution`,`Email`,`Contact No.`) VALUES (?,?,?,?,?,?,?)",
+        [uid, name1, position1, association1, institution1, email1, contact1],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
         }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,phd[0],phdUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
+    );
+    pool.query(
+        "INSERT INTO referees (`idUser`,`Name`,`Position`,`Association`,`Institution`,`Email`,`Contact No.`) VALUES (?,?,?,?,?,?,?)",
+        [uid, name2, position2, association2, institution2, email2, contact2],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
         }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,pg[0],pgUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
+    );
+    pool.query(
+        "INSERT INTO referees (`idUser`,`Name`,`Position`,`Association`,`Institution`,`Email`,`Contact No.`) VALUES (?,?,?,?,?,?,?)",
+        [uid, name3, position3, association3, institution3, email3, contact3],
+        (error) => {
+            if (error) {
+                console.error("Error inserting data: ", error);
+                res.status(500).send("Error inserting data");
+            }
         }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,ug[0],ugUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
+    );
+});
+app.get("/getfiles/:uuid", (req, res) => {
+    const uuid = req.params.uuid
+    pool.query(
+        "SELECT * FROM `documents` WHERE idUser = ?",
+        [uuid],
+        (error, results) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            res.json(results);
         }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,doc12[0],doc12Url],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
+    );
+});
+app.get("referals/:uuid", (req, res) => {
+    const uuid = req.params.uuid
+    pool.query(
+        "SELECT * FROM `referees` WHERE idUser = ?",
+        [uuid],
+        (error, results) => {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            res.json(results);
         }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,doc10[0],doc10Url],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,paySlip[0],paySlipUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,noc[0],nocUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,postPhd[0],postPhdUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,exp[0],expUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-
-    pool.query('INSERT INTO documents (idUser,`File Name`,`File Link`) VALUES (?,?,?)',[uid,sign[0],signUrl],(error)=>{
-        if(error){
-            console.error("Error inserting data: ", error);
-            res.status(500).send("Error inserting data");
-        }
-    })
-
-})
+    );
+});
 
 
 app.listen(port, () => {

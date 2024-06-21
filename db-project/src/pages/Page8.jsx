@@ -1,10 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../components/Input";
 import TableInput from "../components/TableInput";
 // import { sendPostReq } from "../util";
 import classes from "./Page.module.css";
 import PageHead from "./PageHead";
 import Select from "react-select";
+import axios from "axios";
 const options = [
   { value: "Thesis Supervisor", label: "Thesis Supervisor" },
   { value: "Postdoc Supervisor", label: "Postdoc Supervisor" },
@@ -23,139 +24,133 @@ export default function Page8() {
   const [postPhd, setPostPhd] = useState();
   const [exp, setExp] = useState();
   const [sign, setSign] = useState();
-  async function sendPostReq() {
-    const payload = {
-      bestPapers: ["bestPapers", bestPapers],
-      phd: ["phd", phd],
-      pg: ["pg", pg],
-      ug: ["ug", ug],
-      doc12: ["doc12", doc12],
-      doc10: ["doc10", doc10],
-      paySlip: ["paySlip", paySlip],
-      noc: ["noc", noc],
-      postPhd: ["postPhd", postPhd],
-      exp: ["exp", exp],
-      sign: ["sign", sign],
-    };
-
-    const res = await fetch("http://localhost:3000/pg8", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({payload}),
-    });
+  const [signImg, setSignImg] = useState();
+  const [phdButton, setPhdButton] = useState();
+  const [pgButton, setPgButton] = useState();
+  const [ugButton, setUgButton] = useState();
+  const [doc12Button, setDoc12Button] = useState();
+  const [doc10Button, setDoc10Button] = useState();
+  const [paySlipButton, setPaySlipButton] = useState();
+  const [nocButton, setNocButton] = useState();
+  const [postPhdButton, setPostPhdButton] = useState();
+  const [refrees,setRefrees]=useState();
+  async function sendPostReq(e) {
+    e.preventDefault();
+    const uuid=sessionStorage.getItem('uid');
+    const data = new FormData(e.target);
+    data.append("bestPapers", bestPapers);
+    data.append("phd", phd);
+    data.append("pg", pg);
+    data.append("ug", ug);
+    data.append("doc12", doc12);
+    data.append("doc10", doc10);
+    data.append("paySlip", paySlip);
+    data.append("noc", noc);
+    data.append("postPhd", postPhd);
+    data.append("exp", exp);
+    data.append("sign", sign);
+    data.append("uid",uuid);
+    console.log(data)
+    axios
+      .post("http://localhost:3000/pg8", data)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // const res = await fetch("http://localhost:3000/pg8", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({payload}),
+    // });
   }
   function handleChange(e) {
-    // console.log(e.target.files);
-    // const chosenFiles = Array.prototype.slice.call(e.target.files);
-    // const files = chosenFiles.map((res) => {
-    //   const reader = new FileReader();
-    //   reader.readAsDataURL(res);
-    //   let val;
-    //   reader.onloadend = () => {
-    //     setPhd([res.name, reader.result]);
-
-    //   };
-    // });
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setBestPapers([res.name, reader.result]);
-    };
-    // setBestPapers(chosenFiles);
+    const chosenFiles = Array.prototype.slice.call(e.target.files);
+    setBestPapers(e.target.files[0]);
   }
   function handlePhd(e) {
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setPhd([res.name, reader.result]);
-    };
+    setPhd(e.target.files[0]);
   }
   function handlePg(e) {
-    // setPg(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setPg([res.name, reader.result]);
-    };
+    setPg(e.target.files[0]);
   }
   function handleUg(e) {
-    // setUg(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setUg([res.name, reader.result]);
-    };
+    setUg(e.target.files[0]);
   }
   function handleDoc12(e) {
-    // setDoc12(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setDoc12([res.name, reader.result]);
-    };
+    setDoc12(e.target.files[0]);
   }
   function handleDoc10(e) {
-    // setDoc10(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setDoc10([res.name, reader.result]);
-    };
+    setDoc10(e.target.files[0]);
   }
   function handlePaySlip(e) {
-    // setPaySlip(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setPaySlip([res.name, reader.result]);
-    };
+    setPaySlip(e.target.files[0]);
   }
   function handleNoc(e) {
-    // setNoc(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setNoc([res.name, reader.result]);
-    };
+    setNoc(e.target.files[0]);
   }
   function handlePostPhd(e) {
-    // setPostPhd(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setPostPhd([res.name, reader.result]);
-    };
+    setPostPhd(e.target.files[0]);
   }
   function handleExp(e) {
-    // setExp(e.target.files[0]);
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setExp([res.name, reader.result]);
-    };
+    setExp(e.target.files[0]);
   }
   function handleSign(e) {
-    // setSign(URL.createObjectURL(e.target.files[0]));
-    const res = e.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(res);
-    reader.onloadend = () => {
-      setSign([URL.createObjectURL(res), reader.result]);
-    };
+    setSign(e.target.files[0]);
+    setSignImg(URL.createObjectURL(e.target.files[0]));
   }
-
+  useEffect(() => {
+    const uuid=sessionStorage.getItem('uid')
+    if (!uuid) {
+      window.location.href = '/login'
+  }
+    async function getFile() {
+      const response = await fetch(`http://localhost:3000/getfiles/${uuid}`);
+      if (response.ok) {
+        const resData = await response.json();
+        resData.map((i) => {
+          if (i.name === "phd") {
+            setPhdButton(i["File Link"]);
+          }
+          if (i.name === "pg") {
+            setPgButton(i["File Link"]);
+          }
+          if (i.name === "ug") {
+            setUgButton(i["File Link"]);
+          }
+          if (i.name === "doc12") {
+            setDoc12Button(i["File Link"]);
+          }
+          if (i.name === "doc10") {
+            setDoc10Button(i["File Link"]);
+          }
+          if (i.name === "paySlip") {
+            setPaySlipButton(i["File Link"]);
+          }
+          if (i.name === "noc") {
+            setNocButton(i["File Link"]);
+          }
+          if (i.name === "postPhd") {
+            setPostPhdButton(i["File Link"]);
+          }
+        });
+      }
+    }
+    async function getRefrees(){
+      const response=await fetch(`http://localhost:3000/referals/${uuid}`);
+      if(response.ok){
+        const resData=await response.json();
+        setRefrees(resData);
+      }
+    }
+    if(uuid){
+      getFile();
+      getRefrees();
+    }
+  }, []);
   return (
     <div className={classes.page}>
       <PageHead />
@@ -167,7 +162,7 @@ export default function Page8() {
           <button className={classes.logout}>Logout</button>
         </div>
         <hr />
-        <form>
+        <form onSubmit={sendPostReq}>
           <h4>20. Reprints of 5 Best Research Papers *</h4>
           <section>
             <h3>{"Upload 5 Best Research Papers in a single PDF < 6MB"}</h3>
@@ -186,7 +181,7 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {bestPapers && bestPapers[0]}
+                    {bestPapers && bestPapers.name}
                     {/* {bestPapers.map((paper) => (
                       <span>{paper.name} </span>
                     ))} */}
@@ -212,7 +207,7 @@ export default function Page8() {
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   PHD Certificate{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!phdButton}>
                     View Details
                   </button>{" "}
                 </h5>
@@ -225,14 +220,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {phd ? phd[0] : undefined}
+                    {phd ? phd.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   PG Documents{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!pgButton}>
                     View Details
                   </button>
                 </h5>
@@ -245,14 +240,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {pg ? pg[0] : undefined}
+                    {pg ? pg.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   UG Documents{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!ugButton}>
                     View Details
                   </button>
                 </h5>
@@ -265,14 +260,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {ug ? ug[0] : undefined}
+                    {ug ? ug.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   12th/HSC/Diploma Documents{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!doc12Button}>
                     View Details
                   </button>
                 </h5>
@@ -285,14 +280,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {doc12 ? doc12[0] : undefined}
+                    {doc12 ? doc12.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   10th/SSC Documents{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!doc10Button}>
                     View Details
                   </button>
                 </h5>
@@ -305,14 +300,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {doc10 ? doc10[0] : undefined}
+                    {doc10 ? doc10.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   Pay Slip{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!paySlipButton}>
                     View Details
                   </button>
                 </h5>
@@ -331,14 +326,14 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {paySlip ? paySlip[0] : undefined}
+                    {paySlip ? paySlip.name : undefined}
                   </p>
                 </div>
               </section>
               <section className={classes["file-card"]}>
                 <h5 className={classes["card-head"]}>
                   NOC or Undertaking{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!nocButton}>
                     View Details
                   </button>
                 </h5>
@@ -352,7 +347,7 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {noc ? noc[0] : undefined}
+                    {noc ? noc.name : undefined}
                   </p>
                 </div>
               </section>
@@ -360,7 +355,7 @@ export default function Page8() {
                 <h5 className={classes["card-head"]}>
                   Post phd Experience Certificate/All Experience Certificates/
                   Last Pay slip/{" "}
-                  <button className={classes["head-button"]} type="button">
+                  <button className={classes["head-button"]} type="button" disabled={!postPhdButton}>
                     View Details
                   </button>
                 </h5>
@@ -379,7 +374,7 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {postPhd ? postPhd[0] : undefined}
+                    {postPhd ? postPhd.name : undefined}
                   </p>
                 </div>
               </section>
@@ -398,7 +393,7 @@ export default function Page8() {
                     Choose File
                   </label>
                   <p className={classes["selected-item"]}>
-                    {exp ? exp[0] : undefined}
+                    {exp ? exp.name : undefined}
                   </p>
                 </div>
               </section>
@@ -414,7 +409,7 @@ export default function Page8() {
                   </label>
                   {sign && (
                     <img
-                      src={sign[0]}
+                      src={signImg}
                       style={{
                         height: "50px",
                         width: "240px",
@@ -440,77 +435,83 @@ export default function Page8() {
               </tr>
               <tr>
                 <td>
-                  <TableInput identifier="name-1" name="name" />
+                  <TableInput  identifier="name1" name="name" value={refrees && refrees[0].Name}/>
                 </td>
                 <td>
-                  <TableInput identifier="position-1" name="position" />
+                  <TableInput identifier="position1" name="position" value={refrees && refrees[0].Position}/>
                 </td>
                 <td>
-                  <Select options={options} name="association-1" />
+                  <Select options={options} name="association1" value={refrees && refrees[0].Association}/>
                 </td>
                 <td>
                   <TableInput
-                    identifier="institution-1"
+                    identifier="institution1"
                     name="Institution/Organization"
+                    value={refrees && refrees[0].Institution}
                   />
                 </td>
                 <td>
-                  <TableInput identifier="email-1" name="email" />
+                  <TableInput identifier="email1" name="email" value={refrees && refrees[0].Email}/>
                 </td>
                 <td>
-                  <TableInput identifier="Contact-1" name="Contact Number" />
+                  <TableInput identifier="contact1" name="Contact Number" value={refrees && refrees[0]['Contact No.']} />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <TableInput identifier="name-2" name="name" />
+                  <TableInput identifier="name2" name="name" value={refrees && refrees[1].Name} />
                 </td>
                 <td>
-                  <TableInput identifier="position-2" name="position" />
+                  <TableInput identifier="position2" name="position" value={refrees && refrees[1].Position} />
                 </td>
                 <td>
-                  <Select options={options} name="association-2" />
+                  <Select options={options} name="association2" value={refrees && refrees[1].Association} />
                 </td>
                 <td>
                   <TableInput
-                    identifier="institution-2"
+                    identifier="institution2"
                     name="Institution/Organization"
+                    value={refrees && refrees[1].Institution}
                   />
                 </td>
                 <td>
-                  <TableInput identifier="email-2" name="email" />
+                  <TableInput identifier="email2" name="email" value={refrees && refrees[1].Email} />
                 </td>
                 <td>
-                  <TableInput identifier="Contact-2" name="Contact Number" />
+                  <TableInput identifier="contact2" name="Contact Number" value={refrees && refrees[1]['Contact No.']} />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <TableInput identifier="name-3" name="name" />
+                  <TableInput identifier="name3" name="name" value={refrees && refrees[2].Name}/>
                 </td>
                 <td>
-                  <TableInput identifier="position-3" name="position" />
+                  <TableInput identifier="position3" name="position" value={refrees && refrees[2].Position} />
                 </td>
                 <td>
-                  <Select options={options} name="association-3" />
+                  <Select options={options} name="association3" value={refrees && refrees[2].Association} />
                 </td>
                 <td>
                   <TableInput
-                    identifier="institution-3"
+                    identifier="institution3"
                     name="Institution/Organization"
+                    value={refrees && refrees[2].Institution}
                   />
                 </td>
                 <td>
-                  <TableInput identifier="email-3" name="email" />
+                  <TableInput identifier="email3" name="email" value={refrees && refrees[2].Email} />
                 </td>
                 <td>
-                  <TableInput identifier="Contact-3" name="Contact Number" />
+                  <TableInput identifier="contact3" name="Contact Number" value={refrees && refrees[2]['Contact No.']} />
                 </td>
               </tr>
             </table>
           </section>
           <section className={classes.rightAlign}>
-            <button className={classes.submit} type="button" onClick={sendPostReq}>
+            <button onClick={() => window.location.href = '/final'}
+              className={classes.submit}
+              type="submit"
+            >
               Save and Next
             </button>
           </section>
